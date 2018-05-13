@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/cardview_margin">
+
+
+        <TextView
+        android:id="@+id/tv_view_ingredients"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="@dimen/textsize_h2"
+        android:layout_margin="@dimen/ingredients_textview_margin"
+        />
+
+
+</ScrollView>

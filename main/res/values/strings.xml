@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Baking App</string>
+    <string name="SelectAStepActivity_label">SelectAStepActivity</string>
+
+    <string name="recipe_image_content_description">Recipe\'s Photo</string>
+    <string name="step_image_content_description">Step\'s Thumbnail</string>
+
+    <string name="previous_button_text">Previous Step</string>
+    <string name="next_button_text">Next Step</string>
+
+    <string name="no_video_available">No video available</string>
+
+    <string name="appwidget_text">BAKING APP WIDGET</string>
+    <string name="configure">Please select the recipe to be displayed:</string>
+    <string name="add_widget">Add widget</string>
+    <string name="recipe_selected">Recipe selected: </string>
+
+
+</resources>

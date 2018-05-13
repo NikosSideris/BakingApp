@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--general-->
+    <dimen name="textsize_title">30sp</dimen>
+    <dimen name="textsize_h1">24sp</dimen>
+    <dimen name="textsize_h2">20sp</dimen>
+    <dimen name="textsize_normal">16sp</dimen>
+
+
+    <dimen name="app_bar_height">48dp</dimen>
+    <!--select a recipe-->
+    <dimen name="cardview_height">100dp</dimen>
+    <dimen name="cardview_image_height">80dp</dimen>
+    <dimen name="cardview_text_height">60dp</dimen>
+    <dimen name="cardview_margin">5dp</dimen>
+    <dimen name="carview_radius">5dp</dimen>
+
+    <!--select a step-->
+    <dimen name="step_heigh_and_width">60dp</dimen>
+    <dimen name="thumb_width">60dp</dimen>
+    <dimen name="description_height">60dp</dimen>
+    <!--the 2 above should be equal-->
+
+    <!--ingredients-->
+    <dimen name="ingredients_textview_margin">8dp</dimen>
+    <!--<dimen name="item_width">200dp</dimen>-->
+    <!--<dimen name="text_margin">16dp</dimen>-->
+
+
+    <!--view step-->
+    <dimen name="exoplayer_margin">5dp</dimen>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_height">80dp</dimen>
+    <dimen name="widget_width">120dp</dimen>
+    <dimen name="widget_height_land">80dp</dimen>
+    <dimen name="widget_width_land">120dp</dimen>
+
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
+    <!--<dimen name="fab_margin">16dp</dimen>-->
+    <!--<dimen name="item_offset">10dp</dimen>-->
+    <!--<dimen name="detail_backdrop_height">250dp</dimen>-->
+    <!--<dimen name="backdrop_title">30sp</dimen>-->
+    <!--<dimen name="backdrop_subtitle">18sp</dimen>-->
+    <!--<dimen name="card_margin">5dp</dimen>-->
+    <!--<dimen name="card_recipe_radius">0dp</dimen>-->
+    <!--<dimen name="recipe_cover_height">160dp</dimen>-->
+    <!--<dimen name="recipe_title_padding">10dp</dimen>-->
+    <!--<dimen name="recipe_title">15sp</dimen>-->
+
+    <!--<dimen name="card_height">200dp</dimen>-->
+    <!--<dimen name="size_normal">14sp</dimen>-->
+    <!--<dimen name="size_h1">22sp</dimen>-->
+    <!--<dimen name="size_h2">20sp</dimen>-->
+    <!--<dimen name="size_title">30sp</dimen>-->
+    <!--<dimen name="size_subtitle">18sp</dimen>-->
+    <!--<dimen name="recipe_details_fragment">200dp</dimen>-->
+    <!--<dimen name="app_bar_margin">3dp</dimen>-->
+    <!--<dimen name="recipe_details_fragment_tablet">300dp</dimen>-->
+    <!--<dimen name="video_height">480dp</dimen>-->
+
+
+</resources>
