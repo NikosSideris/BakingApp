@@ -41,7 +41,6 @@ public class BakingAppWidget extends AppWidgetProvider {
 
 // Register an onClickListener
         Intent intent = new Intent(context, WidgetShowIngredients.class);
-
         Bundle bundle = new Bundle();
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_TITLE, recipeTitle);
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_INGREDIENTS, recipeIngredients);
