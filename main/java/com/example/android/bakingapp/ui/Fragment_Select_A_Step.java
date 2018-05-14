@@ -9,12 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.StepsAdapter;
 import com.example.android.bakingapp.model.Recipe;
 import com.example.android.bakingapp.model.Step;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -28,11 +29,6 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
     private Step[] mSteps;
     private StepsAdapter mStepsAdapter;
 
-    private int currentStep;
-
-//    private static boolean alreadyCreated=false;
-
-    public int indexSelected;
 
     public Fragment_Select_A_Step() {
     }
@@ -40,9 +36,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
 
     @Override
     public void onItemClickListener(int index) {
-        //TODO IF TABLET && LANDSCAPE DO: COLOR SELECTED
-//        indexSelected=index;
-//        currentStep=index;
+
         mOnItemClickListener.onFragmentStepListener(index);
     }
 
@@ -60,7 +54,6 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
             Timber.plant(new Timber.DebugTree());
             Timber.d("started: implements StepsAdapter.ItemClickListener");
             mContext = getContext();
-//            alreadyCreated=true;
             if (mSteps==null) {
             /* Create a summy Step to include in mSteps so that 1st item in recycler view
             to be the Ingredients
@@ -74,7 +67,6 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
                     mSteps[i] = temporaryStepArray[i - 1];
                 }
 
-//                sRecipe.setSteps(mSteps);
                 Timber.d("Create a dummy Step for ingredients");
             }
         }
@@ -94,7 +86,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_select_a_step, container, false);
-        Timber.d("inflate(R.layout.fragment_select_a_step "+container);
+        Timber.d("inflate(R.layout.fragment_select_a_step %s", container);
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.rv_select_step);
         mStepsAdapter = new StepsAdapter(mContext, mSteps, this);
@@ -103,11 +95,12 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
 
         if (sRecipe == null) {
 
-            int itemsNumber = sRecipe.getSteps().length;
+            int itemsNumber = Objects.requireNonNull(sRecipe).getSteps().length;
 
             for (int i = 0; i < itemsNumber; i++) {
 
                 LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert layoutInflater != null;
                 View v = layoutInflater.inflate(R.layout.fragment_select_a_step_rv_item, container, false);
                 v.setId(i);
                 mRecyclerView.addView(layoutInflater.inflate(R.layout.fragment_select_a_step_rv_item, container, false));

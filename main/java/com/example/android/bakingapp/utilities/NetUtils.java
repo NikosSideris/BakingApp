@@ -155,7 +155,7 @@ public class NetUtils {
                 return null;
             }
         }catch (Exception e){
-            Timber.e("EXCEPTION: "+e);
+            Timber.e("EXCEPTION: %s", e);
         }
         finally {
             urlConnection.disconnect();

@@ -1,5 +1,6 @@
 package com.example.android.bakingapp.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -8,7 +9,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,8 +59,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
             //final
             Context context = BakingAppWidgetConfigureActivity.this;
 
-            // When the button is clicked, store the string locally
-//            String widgetText = mWidgetText.getText().toString();
+            // When the button is clicked, store the preferences;
             savePreferences(context, mAppWidgetId);
 
             // It is the responsibility of the configuration activity to update the app widget
@@ -68,7 +68,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();
-            Timber.e("RESULT_OK" + mAppWidgetId);
+            Timber.e("RESULT_OK%s", mAppWidgetId);
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
             finish();
@@ -82,7 +82,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadTitleFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadTitleFromPreferences" + appWidgetId);
+        Timber.e("loadTitleFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_TITLE, null);
         if (titleValue != null) {
@@ -95,7 +95,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static int loadIdFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadIdFromPreferences" + appWidgetId);
+        Timber.e("loadIdFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         int recipeValue = prefs.getInt(PREF_PREFIX_KEY + appWidgetId + KEY_ID, -1);
         if (recipeValue != -1) {
@@ -108,7 +108,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadImageFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadImagrFromPreferences" + appWidgetId);
+        Timber.e("loadImagrFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String imageValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_RECIPE_SELECTED_IMAGE, null);
         if (imageValue != null) {
@@ -121,7 +121,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadIngredientsFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadIngredientsFromPreferences" + appWidgetId);
+        Timber.e("loadIngredientsFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_INGREDIENTS, null);
         if (titleValue != null) {
@@ -132,7 +132,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     }
 
     static void deletePreferences(Context context, int appWidgetId) {
-        Timber.e("deletePreferences" + appWidgetId);
+        Timber.e("deletePreferences%s", appWidgetId);
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
@@ -140,7 +140,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     // Write the prefix to the SharedPreferences object for this widget
     void savePreferences(Context context, int appWidgetId) {
-        Timber.e("savePreferences" + appWidgetId);
+        Timber.e("savePreferences%s", appWidgetId);
 
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + KEY_TITLE, mTitle);
@@ -151,6 +151,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         prefs.apply();
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -201,8 +202,8 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         for (int i = 0; i < mRecipes.length; i++) {
             recipesList.add(i, mRecipes[i].getName());
         }
-        mWidgetText = (TextView) findViewById(R.id.widget_text);
-        mWidgetList = (ListView) findViewById(R.id.widget_list);
+        mWidgetText = findViewById(R.id.widget_text);
+        mWidgetList = findViewById(R.id.widget_list);
 
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, recipesList);
 
@@ -211,7 +212,6 @@ public class BakingAppWidgetConfigureActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Timber.e("onItemClick");
                 mRecipeSelectedIndex = position;
-                //TODO CODE
                 mRecipeSelected = mRecipes[mRecipeSelectedIndex];
                 mTitle = mRecipeSelected.getName();
                 mRecipeId = mRecipeSelected.getId();
@@ -221,7 +221,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         });
         mWidgetList.setAdapter(listAdapter);
 
-        mAddButton = (Button) findViewById(R.id.add_button);
+        mAddButton = findViewById(R.id.add_button);
         mAddButton.setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.

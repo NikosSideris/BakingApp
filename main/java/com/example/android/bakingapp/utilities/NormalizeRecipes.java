@@ -14,6 +14,9 @@ import java.util.ArrayList;
  */
 public class NormalizeRecipes {
 
+    /*
+    Make sure input is suitable and valid
+     */
     private Recipe[] mRecipes;
     private int numberOfRecipes;
     private Context mContext;
@@ -80,7 +83,7 @@ public class NormalizeRecipes {
             ingredients=new Ingredient[temp.length];
             ingredients=temp;
 
-            if (ingredients.length==0) {
+            if (0 == ingredients.length) {
                 ingredientFlag = true;
             }
                 //check steps

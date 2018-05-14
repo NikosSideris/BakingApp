@@ -19,8 +19,8 @@ import com.example.android.bakingapp.model.Step;
 /**
  * Created by Nikos on 05/07/18.
  */
-public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.CardViewHolder>{
-    private static final String TAG="STEPSADAPTER";
+public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.CardViewHolder> {
+    private static final String TAG = "STEPSADAPTER";
     private Context mContext;
     private Step[] mSteps;
     final private ItemClickListener mOnItemClickListener;
@@ -36,16 +36,16 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.CardViewHold
         sSelectedItems = new SparseBooleanArray();
     }
 
-    public interface ItemClickListener{
-        void onItemClickListener(int index);
-    }
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_select_a_step_rv_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_select_a_step_rv_item, parent, false);
 
         return new CardViewHolder(itemView);
+    }
+
+    public interface ItemClickListener {
+        void onItemClickListener(int index);
     }
 
     @Override
@@ -69,45 +69,49 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.CardViewHold
         return mSteps.length;
     }
 
-    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView short_description;
         ImageView thumbnail;
         LinearLayout mBackground;
+
         public CardViewHolder(View view) {
             super(view);
-            thumbnail =  view.findViewById(R.id.iv_step_thumb);
+            thumbnail = view.findViewById(R.id.iv_step_thumb);
             short_description = view.findViewById(R.id.tv_step_short_description);
-            mBackground=view.findViewById(R.id.ll_step_row);
+            mBackground = view.findViewById(R.id.ll_step_row);
             view.setOnClickListener(this);
         }
 
 
         @Override
         public void onClick(View v) {
-            int index=getAdapterPosition();
-            if (lastIndex==null){
-                lastIndex=index;
+            int index = getAdapterPosition();
+            if (lastIndex == null) {
+                lastIndex = index;
                 lastView = CardViewHolder.this;
                 lastView.mBackground.setSelected(true);
-            }else{
+            } else {
                 lastView.mBackground.setSelected(false);
-                lastIndex=index;
+                lastIndex = index;
                 lastView = CardViewHolder.this;
                 lastView.mBackground.setSelected(true);
             }
             Log.d(TAG, "onClick: LAST INDEX");
-            //****************for coloring ALL PRESSED ****************************
-//            if (sSelectedItems.get(index, false)) {
-//                sSelectedItems.delete(index);
-//                mBackground.setSelected(false);
-////                mLabel.setTextColor(ContextCompat.getColor(mContext, android.R.color.black));
-//            } else {
-//
-////                mLabel.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-//                sSelectedItems.put(index, true);
-//                mBackground.setSelected(true);
-//            }
-            //******************************************************
+
+/*            ****************for coloring ALL PRESSED ****************************
+            if (sSelectedItems.get(index, false)) {
+                sSelectedItems.delete(index);
+                mBackground.setSelected(false);
+//                mLabel.setTextColor(ContextCompat.getColor(mContext, android.R.color.black));
+            } else {
+
+//                mLabel.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                sSelectedItems.put(index, true);
+                mBackground.setSelected(true);
+            }
+            ******************************************************
+*/
+
             mOnItemClickListener.onItemClickListener(index);
         }
     }

@@ -20,8 +20,8 @@ import timber.log.Timber;
 
 
 public class Fragment_View_Ingredients extends Fragment {
-//    private static final String TAG="FVI";
-//    private Context mContext;
+    private static final String TAG = "FVI";
+
     private static Ingredient[] ingredients;
 
     public Fragment_View_Ingredients() {
@@ -34,7 +34,6 @@ public class Fragment_View_Ingredients extends Fragment {
 
         Timber.plant(new Timber.DebugTree());
         Timber.d("CREATED");
-//        mContext = getContext();
 
     }
 
@@ -54,7 +53,7 @@ public class Fragment_View_Ingredients extends Fragment {
     public String renderedIngredients(Ingredient[] ingredientsArray){
 
         Timber.d("CALLED");
-//        String newLine="\n";
+        String newLine = "\n";
         String space="   ";
         String renderIngredients="<h1>INGREDIENTS</h1><br>" ;
 

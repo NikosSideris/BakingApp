@@ -1,5 +1,6 @@
 package com.example.android.bakingapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -10,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.android.bakingapp.data.RecipesAdapter;
@@ -19,7 +19,6 @@ import com.example.android.bakingapp.utilities.Constants;
 import com.example.android.bakingapp.utilities.NetUtils;
 import com.example.android.bakingapp.utilities.NormalizeRecipes;
 import com.example.android.bakingapp.utilities.ScreenInfo;
-import com.example.android.bakingapp.widget.WidgetShowIngredients;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,7 +47,7 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
         Timber.d("Started: implements RecipesAdapter.ItemClickListener");
 
         mContext = getBaseContext();
-        boolean commsOk=checkInternet(this);
+//        boolean commsOk=checkInternet(this);
         if (!checkInternet(this)){
             Toast.makeText(mContext, "No internet Connection. Limited app functionality", Toast.LENGTH_LONG).show();
             Timber.d("No internet Connection");
@@ -85,12 +84,12 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
 
     @Override
     public void onItemClickListener(int index) {
-//        Log.d(TAG, "onItemClickListener");
-        //TODO code
+
         Timber.d("onItemClickListener,switchToDetails ");
         switchToDetails(mRecipes[index]);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class FetchRecipes extends AsyncTask<URL, Void, Recipe[]> {
 
 
@@ -106,6 +105,7 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
             }
             return recipes;
         }
+
         @Override
         protected void onPostExecute(Recipe[] r) {
 

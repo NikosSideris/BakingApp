@@ -45,6 +45,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_TITLE, recipeTitle);
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_INGREDIENTS, recipeIngredients);
         intent.putExtras(bundle);
+        //make sure bundle persists intent
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, FLAG_UPDATE_CURRENT);
 

@@ -20,7 +20,6 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.SelectAStepActivity;
 import com.example.android.bakingapp.model.Step;
 
-import com.example.android.bakingapp.utilities.Beep;
 import com.example.android.bakingapp.utilities.ExoplayerUtils;
 import com.example.android.bakingapp.utilities.ScreenInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -78,27 +77,8 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView;
-//        ScreenInfo device=new ScreenInfo(getContext());
 
         rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-//        if(!device.isTablet()){  //phone
-//            if (device.inPortraitMode()){  //phone-portrait
-//                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-//                Timber.d("1 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-//            }else{  //phone-landscape
-//                rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape, container, false);
-//                Timber.d("rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape");
-//            }
-//        }else{  //tablet
-//            if (device.inPortraitMode()){  //tablet-portrait
-//                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-//                Timber.d("2 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-//            }else{  //tablet-landscape
-//                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-//                Timber.d("3 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-//            }
-//        }
-
 
         Timber.d("FIND COMPONENTS");
         descr = rootView.findViewById(R.id.tv_step_long_description);
@@ -180,7 +160,7 @@ public class Fragment_View_Step extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         Timber.d("onButtonPressed");
         if (mListener != null) {
@@ -200,7 +180,7 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onDetach() {
         Timber.d("onDetach");
-//        Beep b=new Beep();
+
         if (mSimpleExoPlayer!=null) {
             mSimpleExoPlayer.stop();
             mSimpleExoPlayer.release();
@@ -214,7 +194,7 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onDestroyView() {
         Timber.d("onDestroyView");
-//        Beep b=new Beep();
+
         if (mSimpleExoPlayer != null) {
             mSimpleExoPlayer.stop();
             mSimpleExoPlayer.release();
@@ -228,7 +208,7 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onDestroy() {
         Timber.d("onDestroy");
-//        Beep b=new Beep();
+
         if (mSimpleExoPlayer != null) {
             mSimpleExoPlayer.stop();
             mSimpleExoPlayer.release();
@@ -250,7 +230,6 @@ public class Fragment_View_Step extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -258,7 +237,4 @@ public class Fragment_View_Step extends Fragment {
         sStep = step;
     }
 
-//    public static void setmListener(OnFragmentInteractionListener listener) {
-//        mListener = listener;
-//    }
 }
