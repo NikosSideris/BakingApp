@@ -20,8 +20,11 @@
     <dimen name="thumb_width">60dp</dimen>
     <dimen name="description_height">60dp</dimen>
     <dimen name="margin_for_dual_right_panel">8dp</dimen>
+    <dimen name="layout_margin">8dp</dimen>
+    <dimen name="layout_padding">16dp</dimen>
     <!--the 2 above should be equal-->
 
+    <dimen name="min_width">300dp</dimen>
     <!--ingredients-->
     <dimen name="ingredients_textview_margin">8dp</dimen>
     <!--<dimen name="item_width">200dp</dimen>-->

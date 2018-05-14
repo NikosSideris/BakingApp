@@ -37,7 +37,6 @@
                 android:layout_below="@+id/iv_recipe_image"
                 android:baselineAligned="false"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="Test=test=test"
                 android:textAlignment="center"
                 android:textSize="@dimen/textsize_h1" />
 

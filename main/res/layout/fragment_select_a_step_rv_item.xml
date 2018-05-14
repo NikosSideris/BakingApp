@@ -36,7 +36,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/step_heigh_and_width"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="Test=test=test"
                 android:textAlignment="center"
                 android:textSize="@dimen/textsize_h1" />
         </LinearLayout>

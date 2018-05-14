@@ -25,7 +25,7 @@ public class BakingAppWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        Timber.e("updateAppWidget%s", appWidgetId);
+        Timber.d("updateAppWidget%s", appWidgetId);
 //CharSequence
         String recipeTitle = BakingAppWidgetConfigureActivity.loadTitleFromPreferences(context, appWidgetId);
         int recipeId = (BakingAppWidgetConfigureActivity.loadIdFromPreferences(context, appWidgetId));
@@ -58,9 +58,9 @@ public class BakingAppWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         Timber.plant(new Timber.DebugTree());
-        Timber.e("onUpdate");
+        Timber.d("onUpdate");
         for (int appWidgetId : appWidgetIds) {
-            Timber.e("id=%s", appWidgetId);
+            Timber.d("id=%s", appWidgetId);
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
@@ -70,7 +70,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
 
         for (int appWidgetId : appWidgetIds) {
-            Timber.e("onDeleted%s", appWidgetId);
+            Timber.d("onDeleted%s", appWidgetId);
             BakingAppWidgetConfigureActivity.deletePreferences(context, appWidgetId);
         }
     }
@@ -78,13 +78,13 @@ public class BakingAppWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
-        Timber.e("onEnabled");
+        Timber.d("onEnabled");
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-        Timber.e("onDisabled");
+        Timber.d("onDisabled");
     }
 
 

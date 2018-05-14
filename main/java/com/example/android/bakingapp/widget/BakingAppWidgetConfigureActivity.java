@@ -55,7 +55,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Timber.e("onClick");
+            Timber.d("onClick");
             //final
             Context context = BakingAppWidgetConfigureActivity.this;
 
@@ -68,7 +68,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();
-            Timber.e("RESULT_OK%s", mAppWidgetId);
+            Timber.d("RESULT_OK%s", mAppWidgetId);
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
             finish();
@@ -77,12 +77,12 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     public BakingAppWidgetConfigureActivity() {
         super();
-        Timber.e("Constructor");
+        Timber.d("Constructor");
     }
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadTitleFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadTitleFromPreferences%s", appWidgetId);
+        Timber.d("loadTitleFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_TITLE, null);
         if (titleValue != null) {
@@ -95,7 +95,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static int loadIdFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadIdFromPreferences%s", appWidgetId);
+        Timber.d("loadIdFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         int recipeValue = prefs.getInt(PREF_PREFIX_KEY + appWidgetId + KEY_ID, -1);
         if (recipeValue != -1) {
@@ -108,7 +108,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadImageFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadImagrFromPreferences%s", appWidgetId);
+        Timber.d("loadImagrFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String imageValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_RECIPE_SELECTED_IMAGE, null);
         if (imageValue != null) {
@@ -121,7 +121,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadIngredientsFromPreferences(Context context, int appWidgetId) {
-        Timber.e("loadIngredientsFromPreferences%s", appWidgetId);
+        Timber.d("loadIngredientsFromPreferences%s", appWidgetId);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + KEY_INGREDIENTS, null);
         if (titleValue != null) {
@@ -132,7 +132,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     }
 
     static void deletePreferences(Context context, int appWidgetId) {
-        Timber.e("deletePreferences%s", appWidgetId);
+        Timber.d("deletePreferences%s", appWidgetId);
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
@@ -140,7 +140,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     // Write the prefix to the SharedPreferences object for this widget
     void savePreferences(Context context, int appWidgetId) {
-        Timber.e("savePreferences%s", appWidgetId);
+        Timber.d("savePreferences%s", appWidgetId);
 
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + KEY_TITLE, mTitle);
@@ -156,7 +156,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Timber.plant(new Timber.DebugTree());
-        Timber.e("onCreate");
+        Timber.d("onCreate");
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
@@ -168,7 +168,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
 //        getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        Timber.e("Fetching... (Async");
+        Timber.d("Fetching... (Async");
         new AsyncTask<URL, Void, Recipe[]>() {
 
 
@@ -196,7 +196,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
 
     private void updateUI() {
 
-        Timber.e("updateUI");
+        Timber.d("updateUI");
 
         recipesList = new ArrayList<>();
         for (int i = 0; i < mRecipes.length; i++) {
@@ -210,7 +210,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         mWidgetList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Timber.e("onItemClick");
+                Timber.d("onItemClick");
                 mRecipeSelectedIndex = position;
                 mRecipeSelected = mRecipes[mRecipeSelectedIndex];
                 mTitle = mRecipeSelected.getName();
