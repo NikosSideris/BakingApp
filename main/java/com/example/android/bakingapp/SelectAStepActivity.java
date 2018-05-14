@@ -17,11 +17,11 @@ import com.example.android.bakingapp.model.Step;
 import com.example.android.bakingapp.ui.Fragment_Select_A_Step;
 import com.example.android.bakingapp.ui.Fragment_View_Ingredients;
 import com.example.android.bakingapp.ui.Fragment_View_Step;
-import com.example.android.bakingapp.utilities.Beep;
 import com.example.android.bakingapp.utilities.Constants;
-import com.example.android.bakingapp.utilities.ScreenInfo;
+
 
 import java.util.List;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -33,18 +33,16 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     private static Step[] sSteps;
     private Context mContext;
 
-    private ScreenInfo device;
     public static int statusBarHeight;
 
-    private static final String KEY="currentStep";
-    private static int currentStep;
-    private static boolean tabletAndLandscape=false;
-    private static boolean changedOrientation=false;
+    private static final String KEY = "currentStep";
+
+    private static boolean dualPanel;
+    private int currentStep;
 
     private Fragment_Select_A_Step mFragmentSelectAstep;
     private Fragment_View_Ingredients mFragmentViewIngredients;
     private Fragment_View_Step mFragment_view_step;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,18 +50,12 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         Timber.plant(new Timber.DebugTree());
         Timber.d("onCreate");
         mContext = this;
+        dualPanel = false;
         statusBarHeight = getStatusBarHeight();
+        setContentView(R.layout.select_a_step);
 
-        //setContentView
-        device = new ScreenInfo(mContext);
-        if (device.isTablet() && device.inLandscapeMode()) { //tablet landscape
-//            tabletAndLandscape=true;
-            Timber.d("setContentView(R.layout.select_a_step_tablet);");
-            setContentView(R.layout.select_a_step_tablet);
-        } else {
-//            tabletAndLandscape=false;
-            Timber.d("setContentView(R.layout.select_a_step);");
-            setContentView(R.layout.select_a_step);
+        if (findViewById(R.id.fragment_view_a_step_container) != null) {
+            dualPanel = true;
         }
 
         //Toolbar & ActionBar
@@ -78,75 +70,83 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         }
         //First time initialization
         if (savedInstanceState == null) {
-            if (device.isTablet() && device.inLandscapeMode()){tabletAndLandscape=true;}
             Timber.d("savedInstance");
-            sRecipe = getIntent().getExtras().getParcelable(Constants.RECIPE);
-            sSteps = sRecipe.getSteps();
-
-            //initialize the 3 fragments
-            mFragment_view_step=new Fragment_View_Step();
-            mFragmentViewIngredients=new Fragment_View_Ingredients();
-
-            mFragmentSelectAstep=new Fragment_Select_A_Step();
-            Fragment_Select_A_Step.setsRecipe(sRecipe);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-
-            if (tabletAndLandscape) {
-                Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
-                getSupportFragmentManager().beginTransaction().add(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+            sRecipe = Objects.requireNonNull(getIntent().getExtras()).getParcelable(Constants.RECIPE);
+            if (sRecipe != null) {
+                sSteps = sRecipe.getSteps();
             }
 
-            actionBar.setTitle(sRecipe.getName());
-        }else{      //reCreated
-            sRecipe=  savedInstanceState.getParcelable(Constants.RECIPE);
-//            currentStep=savedInstanceState.getInt(KEY);
-            currentStep++;
+            //initialize the 3 fragments
+            mFragment_view_step = new Fragment_View_Step();
+            mFragmentViewIngredients = new Fragment_View_Ingredients();
+
+            mFragmentSelectAstep = new Fragment_Select_A_Step();
+            Fragment_Select_A_Step.setsRecipe(sRecipe);
+
+            if (dualPanel) {
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
+                Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
+            }
+            currentStep = -1;
+
+        } else {      //reCreated
+            sRecipe = savedInstanceState.getParcelable(Constants.RECIPE);
+            currentStep = savedInstanceState.getInt(KEY);
+            if (currentStep != -1) {
+                currentStep++;
+            }
             onFragmentStepListener(currentStep);
         }
-//        actionBar.setTitle(sRecipe.getName());
+        if (actionBar != null) {
+            actionBar.setTitle(sRecipe.getName());
+        }
     }
 
     @Override
     public void onFragmentStepListener(int index) {
-        Timber.d("onFragmentStepListener "+index);
-        device=new ScreenInfo(this);
-        //check if orientation has changed
-        if (device.inLandscapeMode() && device.isTablet()){
-            changedOrientation(true);
-        }else{
-            changedOrientation(false);
-        }
+        Timber.d("onFragmentStepListener %s", index);
 
-        if (index==0){          //ingredients
-            mFragmentViewIngredients=new Fragment_View_Ingredients();
+        mFragmentSelectAstep = new Fragment_Select_A_Step();
+        Fragment_Select_A_Step.setsRecipe(sRecipe);
+
+
+        if (index < 1) {      //ingredients
+            mFragmentViewIngredients = new Fragment_View_Ingredients();
             Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
-            if (tabletAndLandscape){
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
-                if (changedOrientation){
-//                    clearFragmentsBackStack();
+            if (currentStep == -1) {
+                if (dualPanel) {
+                    clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 }
-            }else{          // ! tabletAndLandscape
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).commit();
-
+            } else {
+                currentStep = index;
+                if (dualPanel) {
+                    clearFragmentsBackStack();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
+                }
             }
-        }else{              //steps
-            currentStep = index-1;
-            mFragment_view_step=new Fragment_View_Step();
+        } else {      //steps
+            currentStep = index - 1;
+            mFragment_view_step = new Fragment_View_Step();
             Fragment_View_Step.setStep(sSteps[currentStep]);
-            mFragmentSelectAstep=new Fragment_Select_A_Step();
-            if (tabletAndLandscape){
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step).commit();
-                if (changedOrientation){
-//                    clearFragmentsBackStack();
+
+            if (dualPanel) {
+                clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                }
-            }else {          // ! tabletAndLandscape
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step).addToBackStack(null).commit();
             }
-
         }
-
 
     }
 
@@ -166,15 +166,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         return false;
     }
 
-
-    private void changedOrientation(boolean turnTabletAndLandscape){
-        if (turnTabletAndLandscape){
-            if (tabletAndLandscape){changedOrientation=false;}else{changedOrientation=true;}
-        }else{
-            if (!tabletAndLandscape){changedOrientation=false;}else{changedOrientation=true;}
-        }
-        tabletAndLandscape=turnTabletAndLandscape;
-    }
     @Override
     protected void onRestart() {
         Timber.d("onRestart");
@@ -186,6 +177,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         Timber.d("onStart");
         super.onStart();
     }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Timber.d("onSaveInstanceState");
@@ -200,7 +192,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         Timber.d("buttonPreviousClicked");
         if (currentStep >= 1) {
             currentStep--;
-            onFragmentStepListener(1 + currentStep );
+            onFragmentStepListener(1 + currentStep);
         } else {
             Toast.makeText(mContext, "This is the first step.", Toast.LENGTH_SHORT).show();
         }
@@ -208,7 +200,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     public void buttonNextClicked(View view) {
         Timber.d("buttonNextClicked");
-        if (currentStep < (sSteps.length-1)) {
+        if (currentStep < (sSteps.length - 1)) {
             currentStep++;
             onFragmentStepListener(1 + currentStep);
         } else {
@@ -231,6 +223,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     @Override
     public void onFragmentInteraction(Uri uri) {
         //not needed really
-        Beep beep=new Beep();
+
     }
 }

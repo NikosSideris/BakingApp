@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin_for_dual_right_panel">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/fl_media_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/exoplayer_margin">
+
+            <ImageView
+                android:id="@+id/iv_novideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin_for_dual_right_panel"
+                android:contentDescription="@string/no_video_available"
+                android:src="@drawable/novideoavailable"
+                android:visibility="gone" />
+
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_for_dual_right_panel"
+
+                />
+        </FrameLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_step_long_description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_margin="@dimen/cardview_margin"
+                android:overScrollMode="ifContentScrolls"
+                android:textSize="@dimen/textsize_h1" />
+        </android.support.v4.widget.NestedScrollView>
+
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="@dimen/cardview_margin"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/bu_previous"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="buttonPreviousClicked"
+                android:text="@string/previous_button_text" />
+
+            <Button
+                android:id="@+id/bu_next"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="buttonNextClicked"
+                android:text="@string/next_button_text" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>

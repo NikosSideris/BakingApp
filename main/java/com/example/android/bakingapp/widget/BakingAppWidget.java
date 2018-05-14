@@ -25,7 +25,7 @@ public class BakingAppWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        Timber.e("updateAppWidget" + appWidgetId);
+        Timber.e("updateAppWidget%s", appWidgetId);
 //CharSequence
         String recipeTitle = BakingAppWidgetConfigureActivity.loadTitleFromPreferences(context, appWidgetId);
         int recipeId = (BakingAppWidgetConfigureActivity.loadIdFromPreferences(context, appWidgetId));
@@ -45,7 +45,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_TITLE, recipeTitle);
         bundle.putString(BakingAppWidgetConfigureActivity.KEY_INGREDIENTS, recipeIngredients);
         intent.putExtras(bundle);
-
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.rl_widget, pendingIntent);
@@ -59,7 +59,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         Timber.plant(new Timber.DebugTree());
         Timber.e("onUpdate");
         for (int appWidgetId : appWidgetIds) {
-            Timber.e("id=" + appWidgetId);
+            Timber.e("id=%s", appWidgetId);
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
@@ -69,7 +69,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
 
         for (int appWidgetId : appWidgetIds) {
-            Timber.e("onDeleted" + appWidgetId);
+            Timber.e("onDeleted%s", appWidgetId);
             BakingAppWidgetConfigureActivity.deletePreferences(context, appWidgetId);
         }
     }

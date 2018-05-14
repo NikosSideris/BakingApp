@@ -78,34 +78,27 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView;
-        ScreenInfo device=new ScreenInfo(getContext());
+//        ScreenInfo device=new ScreenInfo(getContext());
 
-        if(!device.isTablet()){  //phone
-            if (device.inPortraitMode()){  //phone-portrait
-                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-                Timber.d("1 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-            }else{  //phone-landscape
-                rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape, container, false);
-                Timber.d("rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape");
-            }
-        }else{  //tablet
-            if (device.inPortraitMode()){  //tablet-portrait
-                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-                Timber.d("2 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-            }else{  //tablet-landscape
-                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-                Timber.d("3 rootView = inflater.inflate(R.layout.fragment_view_step, container");
-            }
-        }
-//        if (!device.inLandscapeMode() && !device.isTablet()) { //phone-portrait
-//            rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
-//        }else{
-//            if (!device.isTablet()){  //phone-landscape
-//            rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape, container, false);
-//        }else{ //tablet
+        rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
+//        if(!device.isTablet()){  //phone
+//            if (device.inPortraitMode()){  //phone-portrait
 //                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
+//                Timber.d("1 rootView = inflater.inflate(R.layout.fragment_view_step, container");
+//            }else{  //phone-landscape
+//                rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape, container, false);
+//                Timber.d("rootView = inflater.inflate(R.layout.fragment_view_step_phone_landscape");
+//            }
+//        }else{  //tablet
+//            if (device.inPortraitMode()){  //tablet-portrait
+//                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
+//                Timber.d("2 rootView = inflater.inflate(R.layout.fragment_view_step, container");
+//            }else{  //tablet-landscape
+//                rootView = inflater.inflate(R.layout.fragment_view_step, container, false);
+//                Timber.d("3 rootView = inflater.inflate(R.layout.fragment_view_step, container");
 //            }
 //        }
+
 
         Timber.d("FIND COMPONENTS");
         descr = rootView.findViewById(R.id.tv_step_long_description);
@@ -265,7 +258,7 @@ public class Fragment_View_Step extends Fragment {
         sStep = step;
     }
 
-    public static void setmListener(OnFragmentInteractionListener listener) {
-        mListener = listener;
-    }
+//    public static void setmListener(OnFragmentInteractionListener listener) {
+//        mListener = listener;
+//    }
 }

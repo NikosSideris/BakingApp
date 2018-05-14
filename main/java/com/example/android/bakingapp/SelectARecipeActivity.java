@@ -47,7 +47,6 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
 
         Timber.d("Started: implements RecipesAdapter.ItemClickListener");
 
-//        Log.d(TAG, "onCreate");
         mContext = getBaseContext();
         boolean commsOk=checkInternet(this);
         if (!checkInternet(this)){
@@ -151,10 +150,13 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+        return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        return isConnected;
+
     }
 
     private void switchToDetails(Recipe recipe) {
