@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.RemoteViews;
 
 import com.example.android.bakingapp.R;
@@ -38,6 +39,7 @@ public class BakingAppWidget extends AppWidgetProvider {
         if (!recipeImage.equals("")) {
             views.setImageViewUri(R.id.appwidget_image, Uri.parse(recipeImage));
         }
+        views.setTextViewText(R.id.appwidget_ingredients, Html.fromHtml(recipeIngredients));
 
 // Register an onClickListener
         Intent intent = new Intent(context, WidgetShowIngredients.class);
