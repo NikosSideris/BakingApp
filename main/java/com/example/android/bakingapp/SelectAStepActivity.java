@@ -95,9 +95,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         } else {      //reCreated
             sRecipe = savedInstanceState.getParcelable(Constants.RECIPE);
             currentStep = savedInstanceState.getInt(KEY);
-            if (currentStep != -1) {
-                currentStep++;
-            }
             onFragmentStepListener(currentStep);
         }
         if (actionBar != null) {
@@ -112,19 +109,21 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         mFragmentSelectAstep = new Fragment_Select_A_Step();
         Fragment_Select_A_Step.setsRecipe(sRecipe);
 
-
-        if (index < 1) {      //ingredients
-            mFragmentViewIngredients = new Fragment_View_Ingredients();
-            Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
-            if (currentStep == -1) {
+        switch (index) {
+            case -1:
+                mFragmentViewIngredients = new Fragment_View_Ingredients();
+                Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
                 } else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).addToBackStack(null).commit();
                 }
-            } else {
+                break;
+            case 0:
+                mFragmentViewIngredients = new Fragment_View_Ingredients();
+                Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
                 currentStep = index;
                 if (dualPanel) {
                     clearFragmentsBackStack();
@@ -133,23 +132,22 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 }
-            }
-        } else {      //steps
-            currentStep = index - 1;
-            mFragment_view_step = new Fragment_View_Step();
-            Fragment_View_Step.setStep(sSteps[currentStep]);
+                break;
+            default:
+                currentStep = index;
+                mFragment_view_step = new Fragment_View_Step();
+                Fragment_View_Step.setStep(sSteps[index - 1]);
 
-            if (dualPanel) {
-                clearFragmentsBackStack();
+                if (dualPanel) {
+                    clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step).commit();
-            } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step).addToBackStack(null).commit();
-            }
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step).commit();
+                } else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step).addToBackStack(null).commit();
+                }
+                break;
         }
-
     }
-
 
     private boolean clearFragmentsBackStack() {
         try {
@@ -190,9 +188,9 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     public void buttonPreviousClicked(View view) {
         Timber.d("buttonPreviousClicked");
-        if (currentStep >= 1) {
+        if (currentStep > 1) {
             currentStep--;
-            onFragmentStepListener(1 + currentStep);
+            onFragmentStepListener(currentStep);
         } else {
             Toast.makeText(mContext, "This is the first step.", Toast.LENGTH_SHORT).show();
         }
@@ -200,9 +198,9 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     public void buttonNextClicked(View view) {
         Timber.d("buttonNextClicked");
-        if (currentStep < (sSteps.length - 1)) {
+        if (currentStep < (sSteps.length)) {
             currentStep++;
-            onFragmentStepListener(1 + currentStep);
+            onFragmentStepListener(currentStep);
         } else {
             Toast.makeText(mContext, "This is the last step.", Toast.LENGTH_SHORT).show();
         }
