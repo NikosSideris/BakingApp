@@ -2,17 +2,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_widget"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/layout_margin"
     android:orientation="vertical"
-    android:background="@color/background"
-    android:padding="@dimen/widget_margin">
+    android:background="@color/background">
 
 
     <TextView
         android:id="@+id/appwidget_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
+
         android:background="@color/background"
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
@@ -26,7 +26,22 @@
         android:id="@+id/appwidget_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/layout_margin"
+        android:maxHeight="@dimen/widget_image_max_height"
+        android:maxWidth="@dimen/widget_image_max_width"
+        android:visibility="gone"
         android:src="@drawable/baking_app_widget_default_img" />
+
+    <TextView
+        android:id="@+id/appwidget_ingredients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="@color/background"
+        android:contentDescription="@string/appwidget_text"
+        android:lineSpacingMultiplier="0.8"
+        android:text="@string/ingredients_title"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/widget_ingredients_text_size" />
 
 </LinearLayout>
