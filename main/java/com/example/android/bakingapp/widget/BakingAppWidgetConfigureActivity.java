@@ -240,6 +240,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         mWidgetText.setText(loadTitleFromPreferences(BakingAppWidgetConfigureActivity.this, mAppWidgetId));
 
 
+
     }
 
     public String renderedIngredients(Ingredient[] ingredientsArray) {
@@ -247,7 +248,7 @@ public class BakingAppWidgetConfigureActivity extends Activity {
         Timber.d("CALLED");
 //        String newLine="\n";
         String space = "   ";
-        String renderIngredients = "<h1>INGREDIENTS</h1><br>";
+        String renderIngredients = "";
 
 
         DecimalFormat df = new DecimalFormat("0.##");
