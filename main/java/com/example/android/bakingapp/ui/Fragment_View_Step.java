@@ -47,7 +47,11 @@ public class Fragment_View_Step extends Fragment {
     private PlayerView mPlayerView;
 
     private Long videoPlayerCurrentPosition;
-    private boolean exoPlayerPlayWhenReady=false;
+    private static final String KEY_CURRENT_POSITION = "current";
+
+    private final static String KEY_WHEN_READY = "whenReady";
+    private boolean exoPlayerPlayWhenReady = true;
+
     private String videoUrl;
     private String description;
 
@@ -66,6 +70,11 @@ public class Fragment_View_Step extends Fragment {
 
         Timber.plant(new Timber.DebugTree());
         Timber.d("started");
+        if (savedInstanceState != null) {
+            videoPlayerCurrentPosition = savedInstanceState.getLong(KEY_CURRENT_POSITION, 0);
+            exoPlayerPlayWhenReady = savedInstanceState.getBoolean(KEY_WHEN_READY, false);
+        }
+
         mContext = getContext();
 
         if (sStep!=null){
@@ -86,7 +95,7 @@ public class Fragment_View_Step extends Fragment {
         frameLayout=rootView.findViewById(R.id.fl_media_container);
         linearLayout = rootView.findViewById(R.id.ll_buttons);
 
-        setOrientationParameters();
+//        setOrientationParameters();
 
         Timber.d("HANDLE PLAYER");
         if (!videoUrl.isEmpty()) {
@@ -130,7 +139,7 @@ public class Fragment_View_Step extends Fragment {
         // Setting SimpleExoPlayer to simpleExoPlayerView
         mPlayerView.setPlayer(mSimpleExoPlayer);
 
-        // Checking whether SimpleExoPlayer is not null to deteriming its current position
+        // Checking whether SimpleExoPlayer is not null to determine its current position
         if (videoPlayerCurrentPosition != null) {
             mSimpleExoPlayer.seekTo(videoPlayerCurrentPosition);
         } else {
@@ -143,6 +152,9 @@ public class Fragment_View_Step extends Fragment {
     }
 
     void setOrientationParameters(){
+        /*
+        exists for future needs: ie changing the parameters of the video player container
+         */
         Timber.d("setOrientationParameters");
         ScreenInfo device=new ScreenInfo(getContext());
         int statusBarHeight = SelectAStepActivity.statusBarHeight;
@@ -167,6 +179,7 @@ public class Fragment_View_Step extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -178,46 +191,40 @@ public class Fragment_View_Step extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (mSimpleExoPlayer != null) {
+            videoPlayerCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
+            exoPlayerPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
+            mSimpleExoPlayer.stop();
+            mSimpleExoPlayer.release();
+            mSimpleExoPlayer = null;
+            mListener = null;
+        }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Timber.d("onSaveInstanceState");
+        if (videoPlayerCurrentPosition != null) {
+            savedInstanceState.putLong(KEY_CURRENT_POSITION, videoPlayerCurrentPosition);
+            savedInstanceState.putBoolean(KEY_WHEN_READY, exoPlayerPlayWhenReady);
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    @Override
     public void onDetach() {
         Timber.d("onDetach");
 
-        if (mSimpleExoPlayer!=null) {
+        if (mSimpleExoPlayer != null) {
             mSimpleExoPlayer.stop();
             mSimpleExoPlayer.release();
-            mSimpleExoPlayer=null;
+            mSimpleExoPlayer = null;
             mPlayerView = null;
             mListener = null;
         }
         super.onDetach();
     }
 
-    @Override
-    public void onDestroyView() {
-        Timber.d("onDestroyView");
-
-        if (mSimpleExoPlayer != null) {
-            mSimpleExoPlayer.stop();
-            mSimpleExoPlayer.release();
-            mSimpleExoPlayer = null;
-            mPlayerView = null;
-            mListener = null;
-        }
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.d("onDestroy");
-
-        if (mSimpleExoPlayer != null) {
-            mSimpleExoPlayer.stop();
-            mSimpleExoPlayer.release();
-            mSimpleExoPlayer = null;
-            mPlayerView = null;
-            mListener = null;
-        }
-        super.onDestroy();
-    }
 
     /**
      * This interface must be implemented by activities that contain this
