@@ -2,6 +2,7 @@ package com.example.android.bakingapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,10 +30,14 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
     private Step[] mSteps;
     private StepsAdapter mStepsAdapter;
 
+    private static Bundle mBundleRecyclerViewState;
+    //    RecyclerView.State mListState;
+    private final String KEY_RECYCLER_STATE = "recycler_state";
+    private RecyclerView mRecyclerView;
+
 
     public Fragment_Select_A_Step() {
     }
-
 
     @Override
     public void onItemClickListener(int index) {
@@ -45,6 +50,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
     public interface FragmentStepListener{
         void onFragmentStepListener(int index);
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +88,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
             step.setId(-1);
             return step;
         }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -89,7 +96,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
         final View rootView = inflater.inflate(R.layout.fragment_select_a_step, container, false);
         Timber.d("inflate(R.layout.fragment_select_a_step %s", container);
 
-        RecyclerView mRecyclerView = rootView.findViewById(R.id.rv_select_step);
+        mRecyclerView = rootView.findViewById(R.id.rv_select_step);
         mStepsAdapter = new StepsAdapter(mContext, mSteps, this);
 
         mRecyclerView.setAdapter(mStepsAdapter);
@@ -129,6 +136,27 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
         Timber.d("onDetach");
 
 //        mOnItemClickListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // save RecyclerView state
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // restore RecyclerView state
+        if (mBundleRecyclerViewState != null) {
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+        }
     }
 
     public static void setsRecipe(Recipe sRecipe) {
