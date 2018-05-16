@@ -78,7 +78,6 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
     @Override
     protected void onRestart() {
         Timber.d("onRestart");
-//        Log.d(TAG, "onRestart");
         new FetchRecipes().execute();
         super.onRestart();
     }
@@ -101,7 +100,7 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
     }
 
     private void updateMainUI() {
-//        Log.d(TAG, "updateMainUI");
+        Timber.d("updateMainUI");
         updateGridLayoutManager();
         Timber.d("updateMainUI");
 
@@ -116,7 +115,6 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
     }
 
     private void updateGridLayoutManager(){
-//        Log.d(TAG, "updateGridLayoutManager");
         int columns=1;
         Timber.d("updateGridLayoutManager");
         mDevice=new ScreenInfo(this);
