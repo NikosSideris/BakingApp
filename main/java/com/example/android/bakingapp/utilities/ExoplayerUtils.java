@@ -83,13 +83,15 @@ import static com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FO
 //                DefaultLoadControl loadControl = new DefaultLoadControl(new Allocator(), 30000, 45000, 1500, DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS);
                 LoadControl loadControl = new DefaultLoadControl();
 
-                mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
-
+//                mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
+                mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
                 // Prepare the MediaSource.
                 String userAgent = Util.getUserAgent(context, "BakingApp");
-                MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                        context, userAgent), new DefaultExtractorsFactory(), null, null);
+//                MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+////                        context, userAgent), new DefaultExtractorsFactory(), null, null);
+                ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory((new DefaultDataSourceFactory(context, userAgent)));
+                MediaSource mediaSource = factory.createMediaSource(mediaUri);
                 mExoPlayer.prepare(mediaSource);
                 mExoPlayer.setPlayWhenReady(false); //true?
 
