@@ -12,13 +12,14 @@
         <FrameLayout
             android:id="@+id/fl_media_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="6"
             android:layout_margin="@dimen/exoplayer_margin">
 
             <ImageView
                 android:id="@+id/iv_novideo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_for_dual_right_panel"
                 android:contentDescription="@string/no_video_available"
@@ -28,7 +29,7 @@
             <com.google.android.exoplayer2.ui.PlayerView
                 android:id="@+id/player_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/margin_for_dual_right_panel"
 
                 />
@@ -36,7 +37,8 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="3">
 
             <TextView
                 android:id="@+id/tv_step_long_description"
@@ -45,14 +47,15 @@
 
                 android:layout_margin="@dimen/cardview_margin"
                 android:overScrollMode="ifContentScrolls"
+                android:textAllCaps="true"
                 android:textSize="@dimen/textsize_h1" />
         </android.support.v4.widget.NestedScrollView>
 
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_margin="@dimen/cardview_margin"
             android:orientation="horizontal">
 

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.bakingapp.data.RecipesAdapter;
@@ -19,6 +18,8 @@ import com.example.android.bakingapp.utilities.Constants;
 import com.example.android.bakingapp.utilities.NetUtils;
 import com.example.android.bakingapp.utilities.NormalizeRecipes;
 import com.example.android.bakingapp.utilities.ScreenInfo;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,10 +50,10 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
         mContext = getBaseContext();
 //        boolean commsOk=checkInternet(this);
         if (!checkInternet(this)){
-            Toast.makeText(mContext, "No internet Connection. Limited app functionality", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "No internet Connection. Please establish connectivity and restart the app", Toast.LENGTH_LONG).show();
             Timber.d("No internet Connection");
         }else {
-            if (savedInstanceState == null) {
+            if (savedInstanceState == null || mRecipes == null) {
                 new FetchRecipes().execute();
                 Timber.d("Fetching Recipes");
             } else {
@@ -68,7 +69,7 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.d(TAG, "onSaveInstanceState");
+        Timber.d("onSaveInstanceState");
         if (mRecipes != null) {
             savedInstanceState.putParcelableArray(Constants.RECIPES, mRecipes);
         }
@@ -89,29 +90,14 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
         switchToDetails(mRecipes[index]);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public class FetchRecipes extends AsyncTask<URL, Void, Recipe[]> {
+    private void switchToDetails(Recipe recipe) {
+        Timber.d("switchToDetails");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.RECIPE, recipe);
+        Intent intent = new Intent(this, SelectAStepActivity.class);
+        intent.putExtras(bundle);
 
-
-        @Override
-        protected Recipe[] doInBackground(URL... urls) {
-            String results;
-            Recipe[] recipes = null;
-            try {
-                results = NetUtils.getRecipeData(new URL(NetUtils.RESULTS_URL));
-                recipes = NetUtils.getAllRecipes(results);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return recipes;
-        }
-
-        @Override
-        protected void onPostExecute(Recipe[] r) {
-
-            mRecipes = new NormalizeRecipes(r,mContext).getRecipes();
-            updateMainUI();
-        }
+        startActivity(intent);
     }
 
     private void updateMainUI() {
@@ -159,14 +145,40 @@ public class SelectARecipeActivity extends AppCompatActivity implements RecipesA
 
     }
 
-    private void switchToDetails(Recipe recipe) {
-        Log.d(TAG, "switchToDetails");
-        Bundle bundle=new Bundle();
-        bundle.putParcelable(Constants.RECIPE, recipe);
-        Intent intent = new Intent(this, SelectAStepActivity.class);
-        intent.putExtras(bundle);
+    @SuppressLint("StaticFieldLeak")
+    public class FetchRecipes extends AsyncTask<URL, Void, Recipe[]> {
 
-        startActivity(intent);
+
+        @Override
+        protected Recipe[] doInBackground(URL... urls) {
+            String results;
+            Recipe[] recipes = null;
+            try {
+                results = NetUtils.getRecipeData(new URL(NetUtils.RESULTS_URL));
+                if (results != null) {
+                    recipes = NetUtils.getAllRecipes(results);
+                }
+            } catch (IOException e) {
+//                e.printStackTrace();
+                Timber.e("IOException");
+            } catch (JSONException e) {
+//                e.printStackTrace();
+                Timber.e("JSONException");
+            }
+
+            return recipes;
+        }
+
+        @Override
+        protected void onPostExecute(Recipe[] r) {
+
+            if (r != null) {
+                mRecipes = new NormalizeRecipes(r, mContext).getRecipes();
+                updateMainUI();
+            } else {
+                Toast.makeText(mContext, "Error fetching data from the server. Please rerun the app in a couple of moments", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
     @Override
     protected void onStart() {

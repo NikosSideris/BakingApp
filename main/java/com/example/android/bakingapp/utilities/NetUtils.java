@@ -40,19 +40,20 @@ public class NetUtils {
     public static final String RESULTS_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
 
-    public static Recipe[] getAllRecipes(String json) {
+    public static Recipe[] getAllRecipes(String json) throws JSONException {
+
         try {
+            if (json != null) {
+                JSONArray results = new JSONArray(json);
 
-            JSONArray results=new JSONArray(json);
+                Recipe[] recipes = new Recipe[results.length()];
 
-            Recipe[] recipes = new Recipe[results.length()];
+                for (int i = 0; i < results.length(); i++) {
+                    recipes[i] = getRecipeFromJSON(results, i);
 
-            for (int i = 0; i < results.length(); i++) {
-                recipes[i] = getRecipeFromJSON(results, i);
-
+                }
+                return recipes;
             }
-            return recipes;
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

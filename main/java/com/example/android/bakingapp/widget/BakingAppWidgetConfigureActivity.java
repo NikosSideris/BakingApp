@@ -15,12 +15,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.model.Ingredient;
 import com.example.android.bakingapp.model.Recipe;
 import com.example.android.bakingapp.utilities.NetUtils;
 import com.example.android.bakingapp.utilities.NormalizeRecipes;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -181,6 +184,8 @@ public class BakingAppWidgetConfigureActivity extends Activity {
                     recipes = NetUtils.getAllRecipes(results);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 return recipes;
             }
@@ -188,8 +193,12 @@ public class BakingAppWidgetConfigureActivity extends Activity {
             @Override
             protected void onPostExecute(Recipe[] r) {
 
-                mRecipes = new NormalizeRecipes(r, mContext).getRecipes();
-                updateUI();
+                if (r != null) {
+                    mRecipes = new NormalizeRecipes(r, mContext).getRecipes();
+                    updateUI();
+                } else {
+                    Toast.makeText(mContext, "Error fetching data from the server. Please check internet connection and retry in a couple of moments", Toast.LENGTH_SHORT).show();
+                }
             }
         }.execute();
     }

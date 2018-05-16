@@ -95,7 +95,7 @@ public class Fragment_View_Step extends Fragment {
         frameLayout=rootView.findViewById(R.id.fl_media_container);
         linearLayout = rootView.findViewById(R.id.ll_buttons);
 
-//        setOrientationParameters();
+        setOrientationParameters();
 
         Timber.d("HANDLE PLAYER");
         if (!videoUrl.isEmpty()) {
