@@ -20,11 +20,14 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.SelectAStepActivity;
 import com.example.android.bakingapp.model.Step;
 
+import com.example.android.bakingapp.utilities.Beep;
 import com.example.android.bakingapp.utilities.ExoplayerUtils;
 import com.example.android.bakingapp.utilities.ScreenInfo;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.util.Util;
 
 
 import timber.log.Timber;
@@ -70,6 +73,7 @@ public class Fragment_View_Step extends Fragment {
 
         Timber.plant(new Timber.DebugTree());
         Timber.d("started");
+        videoPlayerCurrentPosition = C.TIME_UNSET;
         if (savedInstanceState != null) {
             videoPlayerCurrentPosition = savedInstanceState.getLong(KEY_CURRENT_POSITION, 0);
             exoPlayerPlayWhenReady = savedInstanceState.getBoolean(KEY_WHEN_READY, false);
@@ -102,7 +106,7 @@ public class Fragment_View_Step extends Fragment {
             Timber.d("video url Not empty");
 
             mPlayerView = rootView.findViewById(R.id.player_view);
-            initExpoPlayer();
+//            initExpoPlayer();
 
             descr = rootView.findViewById(R.id.tv_step_long_description);
             descr.setText(description);
@@ -120,6 +124,7 @@ public class Fragment_View_Step extends Fragment {
     }
     private void initExpoPlayer(){
         Timber.d("initExpoPlayer");
+        Beep b = new Beep();
         // Checking whether SimpleExoPlayer is null
         if (mSimpleExoPlayer == null) {
 
@@ -200,6 +205,16 @@ public class Fragment_View_Step extends Fragment {
             mListener = null;
         }
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mSimpleExoPlayer == null)) {
+            initExpoPlayer();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Timber.d("onSaveInstanceState");
