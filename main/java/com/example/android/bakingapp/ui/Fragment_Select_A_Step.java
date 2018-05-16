@@ -48,7 +48,8 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Timber.plant(new Timber.DebugTree());
+        Timber.d("onCreate");
 
         if (sRecipe != null) {
             Timber.plant(new Timber.DebugTree());
@@ -94,7 +95,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
         mRecyclerView.setAdapter(mStepsAdapter);
 
         if (sRecipe == null) {
-
+            Timber.d("sRecipe == null");
             int itemsNumber = Objects.requireNonNull(sRecipe).getSteps().length;
 
             for (int i = 0; i < itemsNumber; i++) {
@@ -124,9 +125,10 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
 
     @Override
     public void onDetach() {
-        Timber.d("onDetach");
         super.onDetach();
-        mOnItemClickListener = null;
+        Timber.d("onDetach");
+
+//        mOnItemClickListener = null;
     }
 
     public static void setsRecipe(Recipe sRecipe) {
