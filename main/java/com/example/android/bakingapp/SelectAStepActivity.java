@@ -135,7 +135,10 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                 break;
             default:
                 currentStep = index;
-                mFragment_view_step = new Fragment_View_Step();
+                if (mFragment_view_step == null) {
+                    Timber.d("mFragment_view_step==null");
+                    mFragment_view_step = new Fragment_View_Step();
+                }
                 Fragment_View_Step.setStep(sSteps[index - 1]);
 
                 if (dualPanel) {
@@ -166,14 +169,16 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     @Override
     protected void onRestart() {
-        Timber.d("onRestart");
         super.onRestart();
+        Timber.d("onRestart");
+
     }
 
     @Override
     protected void onStart() {
-        Timber.d("onStart");
         super.onStart();
+        Timber.d("onStart");
+
     }
 
     @Override
