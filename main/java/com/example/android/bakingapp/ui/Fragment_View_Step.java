@@ -152,9 +152,7 @@ public class Fragment_View_Step extends Fragment {
     }
 
     void setOrientationParameters(){
-        /*
-        exists for future needs: ie changing the parameters of the video player container
-         */
+
         Timber.d("setOrientationParameters");
         ScreenInfo device=new ScreenInfo(getContext());
         int statusBarHeight = SelectAStepActivity.statusBarHeight;
