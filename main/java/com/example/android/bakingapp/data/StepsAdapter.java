@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.model.Step;
 
+import timber.log.Timber;
+
 /**
  * Created by Nikos on 05/07/18.
  */
@@ -96,7 +98,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.CardViewHold
                 lastView = CardViewHolder.this;
                 lastView.mBackground.setSelected(true);
             }
-            Log.d(TAG, "onClick: LAST INDEX");
+            Timber.d("onClick: LAST INDEX");
 
 /*            ****************for coloring ALL PRESSED ****************************
             if (sSelectedItems.get(index, false)) {
