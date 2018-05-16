@@ -32,7 +32,9 @@ import static org.hamcrest.Matchers.is;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class SelectAStepActivityTest {
-
+    /*
+    Should work in portrait mode only
+     */
     @Rule
     public ActivityTestRule<SelectARecipeActivity> mActivityTestRule = new ActivityTestRule<>(SelectARecipeActivity.class);
 
