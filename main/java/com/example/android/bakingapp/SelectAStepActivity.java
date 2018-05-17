@@ -159,6 +159,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                     manager.beginTransaction().remove(fragment).commit();
 
                     while (!(manager.executePendingTransactions())) {
+                        //make sure remove has been executed before going further, otherwise might throw error
                     }
 
                     Fragment_View_Step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
@@ -212,7 +213,10 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
             manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             return true;
         } catch (Exception e) {
-//            e.printStackTrace();
+            /*
+            Case when pressing home button before going into steps, where fragments have
+            not been initialized
+             */
             Timber.e(e, "clearFragmentsBackStack");
         }
         return false;
@@ -222,8 +226,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     protected void onRestart() {
         super.onRestart();
         Timber.d("onRestart");
-
-
     }
 
     @Override
@@ -232,7 +234,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         Timber.d("onStart");
 
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -255,6 +256,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
             Toast.makeText(mContext, "This is the first step.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public void buttonNextClicked(View view) {
         Timber.d("buttonNextClicked");
