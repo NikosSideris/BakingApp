@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import com.example.android.bakingapp.ui.Fragment_Select_A_Step;
 import com.example.android.bakingapp.ui.Fragment_View_Ingredients;
 import com.example.android.bakingapp.ui.Fragment_View_Step;
 import com.example.android.bakingapp.utilities.Constants;
+import com.example.android.bakingapp.utilities.ScreenInfo;
 
 
 import java.util.List;
@@ -36,6 +38,9 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     public static int statusBarHeight;
 
     private static final String KEY = "currentStep";
+    private static final String KEY_FRAGMENT = "fragmentViewStep";
+    private static final String KEY_POSITION = "position";
+    private static final String KEY_PLAY = "play";
 
     private static boolean dualPanel;
     private int currentStep;
@@ -43,6 +48,12 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     private Fragment_Select_A_Step mFragmentSelectAstep;
     private Fragment_View_Ingredients mFragmentViewIngredients;
     private Fragment_View_Step mFragment_view_step;
+
+    public static long savedPlayerPosition = 0;
+    public static boolean savedPlayerWhenReady = true;
+
+//    private ScreenInfo device;
+//    private static boolean currentOrientation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +81,9 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         }
         //First time initialization
         if (savedInstanceState == null) {
+
+//            device=new ScreenInfo(mContext);
+//            currentOrientation=device.inPortraitMode();
             Timber.d("savedInstance");
             sRecipe = Objects.requireNonNull(getIntent().getExtras()).getParcelable(Constants.RECIPE);
             if (sRecipe != null) {
@@ -93,8 +107,12 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
             currentStep = -1;
 
         } else {      //reCreated
+
             sRecipe = savedInstanceState.getParcelable(Constants.RECIPE);
             currentStep = savedInstanceState.getInt(KEY);
+            savedPlayerPosition = savedInstanceState.getLong(KEY_POSITION);
+            savedPlayerWhenReady = savedInstanceState.getBoolean(KEY_PLAY);
+
             onFragmentStepListener(currentStep);
         }
         if (actionBar != null) {
@@ -105,6 +123,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     @Override
     public void onFragmentStepListener(int index) {
         Timber.d("onFragmentStepListener %s", index);
+
 
         mFragmentSelectAstep = new Fragment_Select_A_Step();
         Fragment_Select_A_Step.setsRecipe(sRecipe);
@@ -128,28 +147,63 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients, KEY_FRAGMENT).commit();
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 }
                 break;
             default:
                 currentStep = index;
-                if (mFragment_view_step == null) {
-                    Timber.d("mFragment_view_step==null");
-                    mFragment_view_step = new Fragment_View_Step();
-                }
-                Fragment_View_Step.setStep(sSteps[index - 1]);
 
+                FragmentManager manager = getSupportFragmentManager();
+                Fragment_View_Step fragment = (Fragment_View_Step) manager.findFragmentByTag(KEY_FRAGMENT);
+                boolean fragment_view_step_exists = false;
+                if (fragment != null) {
+                    fragment_view_step_exists = true;
+                    manager.beginTransaction().remove(fragment).commit();
+
+                    while (!(manager.executePendingTransactions())) {
+                    }
+
+                    fragment.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
+                    fragment.setVideoPlayerCurrentPosition(savedPlayerPosition);
+                    Fragment_View_Step.setStep(sSteps[index - 1]);
+                } else {
+                    mFragment_view_step = new Fragment_View_Step();
+                    mFragment_view_step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
+                    mFragment_view_step.setVideoPlayerCurrentPosition(savedPlayerPosition);
+                    Fragment_View_Step.setStep(sSteps[index - 1]);
+                }
+//                mFragment_view_step = new Fragment_View_Step();
+//                mFragment_view_step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
+//                mFragment_view_step.setVideoPlayerCurrentPosition(savedPlayerPosition);
+//                Fragment_View_Step.setStep(sSteps[index - 1]);
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step).commit();
-                } else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step).addToBackStack(null).commit();
+                    if (fragment_view_step_exists) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, fragment, KEY_FRAGMENT).commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step, KEY_FRAGMENT).commit();
+                    }
+                } else {                //addToBackStack(null).
+                    if (fragment_view_step_exists) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, fragment, KEY_FRAGMENT).commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragment_view_step, KEY_FRAGMENT).commit();
+                    }
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if (mFragment_view_step.getVideoPlayerCurrentPosition() != 0) {
+            savedPlayerPosition = mFragment_view_step.getVideoPlayerCurrentPosition();
+            savedPlayerWhenReady = mFragment_view_step.isExoPlayerPlayWhenReady();
+        }
+        super.onPause();
     }
 
     private boolean clearFragmentsBackStack() {
@@ -162,7 +216,8 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
             manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            Timber.e(e, "clearFragmentsBackStack");
         }
         return false;
     }
@@ -171,6 +226,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     protected void onRestart() {
         super.onRestart();
         Timber.d("onRestart");
+
 
     }
 
@@ -181,12 +237,15 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Timber.d("onSaveInstanceState");
         if (sRecipe != null) {
             savedInstanceState.putParcelable(Constants.RECIPE, sRecipe);
             savedInstanceState.putInt(KEY, currentStep);
+            savedInstanceState.putLong(KEY_POSITION, savedPlayerPosition);
+            savedInstanceState.putBoolean(KEY_PLAY, savedPlayerWhenReady);
         }
         super.onSaveInstanceState(savedInstanceState);
     }
