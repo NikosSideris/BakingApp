@@ -131,7 +131,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).addToBackStack(null).commit();
                 }
@@ -143,7 +143,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients, KEY_FRAGMENT).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragmentViewIngredients).commit();
                 } else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 }

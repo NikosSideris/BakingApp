@@ -156,6 +156,7 @@ public class Fragment_Select_A_Step extends Fragment implements StepsAdapter.Ite
         if (mBundleRecyclerViewState != null) {
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
             mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+
         }
     }
 
