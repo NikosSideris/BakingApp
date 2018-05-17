@@ -61,12 +61,12 @@ public class Fragment_View_Step extends Fragment {
     private static final String KEY_CURRENT_POSITION = "current";
     private static boolean isLandscape = false;
     private final static String KEY_WHEN_READY = "whenReady";
-    private boolean exoPlayerPlayWhenReady = true;
+    private static boolean exoPlayerPlayWhenReady;
     int currentWindow = 0;
 
     private String videoUrl;
     private String description;
-    private Long videoPlayerCurrentPosition = 0l;
+    private static Long videoPlayerCurrentPosition;
     private ScreenInfo device;
 
     private TextView descr;
@@ -368,19 +368,19 @@ public class Fragment_View_Step extends Fragment {
         sStep = step;
     }
 
-    public Long getVideoPlayerCurrentPosition() {
+    public static Long getVideoPlayerCurrentPosition() {
         return videoPlayerCurrentPosition;
     }
 
-    public void setVideoPlayerCurrentPosition(Long videoPlayerCurrentPosition) {
-        this.videoPlayerCurrentPosition = videoPlayerCurrentPosition;
+    public static void setVideoPlayerCurrentPosition(Long playerCurrentPosition) {
+        videoPlayerCurrentPosition = playerCurrentPosition;
     }
 
-    public boolean isExoPlayerPlayWhenReady() {
+    public static boolean isExoPlayerPlayWhenReady() {
         return exoPlayerPlayWhenReady;
     }
 
-    public void setExoPlayerPlayWhenReady(boolean exoPlayerPlayWhenReady) {
-        this.exoPlayerPlayWhenReady = exoPlayerPlayWhenReady;
+    public static void setExoPlayerPlayWhenReady(boolean playWhenReady) {
+        exoPlayerPlayWhenReady = playWhenReady;
     }
 }

@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +18,7 @@ import com.example.android.bakingapp.ui.Fragment_Select_A_Step;
 import com.example.android.bakingapp.ui.Fragment_View_Ingredients;
 import com.example.android.bakingapp.ui.Fragment_View_Step;
 import com.example.android.bakingapp.utilities.Constants;
-import com.example.android.bakingapp.utilities.ScreenInfo;
+
 
 
 import java.util.List;
@@ -52,8 +51,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
     public static long savedPlayerPosition = 0;
     public static boolean savedPlayerWhenReady = true;
 
-//    private ScreenInfo device;
-//    private static boolean currentOrientation;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,8 +80,6 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         //First time initialization
         if (savedInstanceState == null) {
 
-//            device=new ScreenInfo(mContext);
-//            currentOrientation=device.inPortraitMode();
             Timber.d("savedInstance");
             sRecipe = Objects.requireNonNull(getIntent().getExtras()).getParcelable(Constants.RECIPE);
             if (sRecipe != null) {
@@ -128,7 +124,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
         mFragmentSelectAstep = new Fragment_Select_A_Step();
         Fragment_Select_A_Step.setsRecipe(sRecipe);
 
-        switch (index) {
+        switch (index) {    //initialization
             case -1:
                 mFragmentViewIngredients = new Fragment_View_Ingredients();
                 Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
@@ -140,7 +136,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).addToBackStack(null).commit();
                 }
                 break;
-            case 0:
+            case 0:         //ingredients
                 mFragmentViewIngredients = new Fragment_View_Ingredients();
                 Fragment_View_Ingredients.setIngredients(sRecipe.getIngredients());
                 currentStep = index;
@@ -152,7 +148,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentViewIngredients).addToBackStack(null).commit();
                 }
                 break;
-            default:
+            default:        //steps
                 currentStep = index;
 
                 FragmentManager manager = getSupportFragmentManager();
@@ -165,19 +161,15 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                     while (!(manager.executePendingTransactions())) {
                     }
 
-                    fragment.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
-                    fragment.setVideoPlayerCurrentPosition(savedPlayerPosition);
+                    Fragment_View_Step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
+                    Fragment_View_Step.setVideoPlayerCurrentPosition(savedPlayerPosition);
                     Fragment_View_Step.setStep(sSteps[index - 1]);
                 } else {
                     mFragment_view_step = new Fragment_View_Step();
-                    mFragment_view_step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
-                    mFragment_view_step.setVideoPlayerCurrentPosition(savedPlayerPosition);
+                    Fragment_View_Step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
+                    Fragment_View_Step.setVideoPlayerCurrentPosition(savedPlayerPosition);
                     Fragment_View_Step.setStep(sSteps[index - 1]);
                 }
-//                mFragment_view_step = new Fragment_View_Step();
-//                mFragment_view_step.setExoPlayerPlayWhenReady(savedPlayerWhenReady);
-//                mFragment_view_step.setVideoPlayerCurrentPosition(savedPlayerPosition);
-//                Fragment_View_Step.setStep(sSteps[index - 1]);
                 if (dualPanel) {
                     clearFragmentsBackStack();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, mFragmentSelectAstep).commit();
@@ -186,7 +178,7 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
                     } else {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_view_a_step_container, mFragment_view_step, KEY_FRAGMENT).commit();
                     }
-                } else {                //addToBackStack(null).
+                } else {
                     if (fragment_view_step_exists) {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_select_a_step_container, fragment, KEY_FRAGMENT).commit();
                     } else {
@@ -199,9 +191,13 @@ public class SelectAStepActivity extends AppCompatActivity implements Fragment_S
 
     @Override
     protected void onPause() {
-        if (mFragment_view_step.getVideoPlayerCurrentPosition() != 0) {
-            savedPlayerPosition = mFragment_view_step.getVideoPlayerCurrentPosition();
-            savedPlayerWhenReady = mFragment_view_step.isExoPlayerPlayWhenReady();
+        try {
+            if (Fragment_View_Step.getVideoPlayerCurrentPosition() != 0) {
+                savedPlayerPosition = Fragment_View_Step.getVideoPlayerCurrentPosition();
+                savedPlayerWhenReady = Fragment_View_Step.isExoPlayerPlayWhenReady();
+            }
+        } catch (NullPointerException e) {
+            Timber.e(e, "NullPointerException @ onPause");
         }
         super.onPause();
     }
