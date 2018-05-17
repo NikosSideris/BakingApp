@@ -21,7 +21,6 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.SelectAStepActivity;
 import com.example.android.bakingapp.model.Step;
 
-import com.example.android.bakingapp.utilities.Beep;
 import com.example.android.bakingapp.utilities.ExoplayerUtils;
 import com.example.android.bakingapp.utilities.ScreenInfo;
 import com.google.android.exoplayer2.C;
@@ -57,9 +56,7 @@ public class Fragment_View_Step extends Fragment {
     private SimpleExoPlayer mSimpleExoPlayer;
     private PlayerView mPlayerView;
     private static final String KEY_WINDOW = "window";
-
     private static final String KEY_CURRENT_POSITION = "current";
-    private static boolean isLandscape = false;
     private final static String KEY_WHEN_READY = "whenReady";
     private static boolean exoPlayerPlayWhenReady;
     int currentWindow = 0;
@@ -81,7 +78,7 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Beep bb = new Beep();
+
         Timber.plant(new Timber.DebugTree());
         Timber.d("started");
 
@@ -150,7 +147,7 @@ public class Fragment_View_Step extends Fragment {
 
     private void initExpoPlayer() {
         Timber.d("initExpoPlayer");
-//        Beep b = new Beep();
+
         // Checking whether SimpleExoPlayer is null
         if (mSimpleExoPlayer == null) {
 
@@ -182,6 +179,9 @@ public class Fragment_View_Step extends Fragment {
     }
 
     private void initializePlayer() {
+        /*
+        Replaced with initExpoPlayer, but keeping it here for future experimentation
+         */
         mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), new DefaultTrackSelector(), new DefaultLoadControl());
 
         mPlayerView.setPlayer(mSimpleExoPlayer);
@@ -244,7 +244,6 @@ public class Fragment_View_Step extends Fragment {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-//        onDetach();
     }
 
     private void releasePlayer() {
@@ -294,36 +293,6 @@ public class Fragment_View_Step extends Fragment {
         }
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if (Util.SDK_INT <= 23) {
-//            if (mSimpleExoPlayer != null) {
-//                SelectAStepActivity.playerPosition=videoPlayerCurrentPosition;
-//                SelectAStepActivity.playerPlayWhenReady=exoPlayerPlayWhenReady;
-//                videoPlayerCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
-//                exoPlayerPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
-//                mSimpleExoPlayer.stop();
-//                mSimpleExoPlayer.release();
-//                mSimpleExoPlayer = null;
-//                mListener = null;
-//            }
-//        }
-//    }
-
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if ((Util.SDK_INT <= 23 || mSimpleExoPlayer == null)) {
-//            initExpoPlayer();
-//        }else {
-//            mSimpleExoPlayer.seekTo(videoPlayerCurrentPosition);
-//
-//            mSimpleExoPlayer.setPlayWhenReady(exoPlayerPlayWhenReady);
-//        }
-//    }
-
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Timber.d("onSaveInstanceState");
@@ -338,14 +307,6 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onDetach() {
         Timber.d("onDetach");
-
-//        if (mSimpleExoPlayer != null) {
-//            mSimpleExoPlayer.stop();
-//            mSimpleExoPlayer.release();
-//            mSimpleExoPlayer = null;
-//            mPlayerView = null;
-//            mListener = null;
-//        }
         super.onDetach();
     }
 
