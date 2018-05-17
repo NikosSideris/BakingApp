@@ -1,5 +1,6 @@
 package com.example.android.bakingapp.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -24,9 +25,16 @@ import com.example.android.bakingapp.utilities.Beep;
 import com.example.android.bakingapp.utilities.ExoplayerUtils;
 import com.example.android.bakingapp.utilities.ScreenInfo;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 
@@ -40,7 +48,7 @@ import timber.log.Timber;
  */
 public class Fragment_View_Step extends Fragment {
 
-    private final static String TAG="FVS";
+    private final static String TAG = "FVS";
     private Context mContext;
     private static Step sStep;
 
@@ -48,15 +56,18 @@ public class Fragment_View_Step extends Fragment {
 
     private SimpleExoPlayer mSimpleExoPlayer;
     private PlayerView mPlayerView;
+    private static final String KEY_WINDOW = "window";
 
-    private Long videoPlayerCurrentPosition;
     private static final String KEY_CURRENT_POSITION = "current";
-
+    private static boolean isLandscape = false;
     private final static String KEY_WHEN_READY = "whenReady";
     private boolean exoPlayerPlayWhenReady = true;
+    int currentWindow = 0;
 
     private String videoUrl;
     private String description;
+    private Long videoPlayerCurrentPosition = 0l;
+    private ScreenInfo device;
 
     private TextView descr;
     ImageView imageView;
@@ -70,20 +81,31 @@ public class Fragment_View_Step extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Beep bb = new Beep();
         Timber.plant(new Timber.DebugTree());
         Timber.d("started");
+
+        exoPlayerPlayWhenReady = true;
         videoPlayerCurrentPosition = C.TIME_UNSET;
         if (savedInstanceState != null) {
+            Timber.d("savedInstanceState != null");
             videoPlayerCurrentPosition = savedInstanceState.getLong(KEY_CURRENT_POSITION, 0);
             exoPlayerPlayWhenReady = savedInstanceState.getBoolean(KEY_WHEN_READY, false);
+            currentWindow = savedInstanceState.getInt(KEY_WINDOW);
+
+        } else {
+            if (SelectAStepActivity.savedPlayerPosition > 0) {
+                videoPlayerCurrentPosition = SelectAStepActivity.savedPlayerPosition;
+                exoPlayerPlayWhenReady = SelectAStepActivity.savedPlayerWhenReady;
+            }
+            Timber.d("savedInstanceState == null");
         }
 
         mContext = getContext();
 
-        if (sStep!=null){
-            videoUrl=sStep.getVideoUrl();
-            description=sStep.getDescription();
+        if (sStep != null) {
+            videoUrl = sStep.getVideoUrl();
+            description = sStep.getDescription();
         }
     }
 
@@ -95,13 +117,15 @@ public class Fragment_View_Step extends Fragment {
 
         Timber.d("FIND COMPONENTS");
         descr = rootView.findViewById(R.id.tv_step_long_description);
-        imageView=rootView.findViewById(R.id.iv_novideo);
-        frameLayout=rootView.findViewById(R.id.fl_media_container);
+        imageView = rootView.findViewById(R.id.iv_novideo);
+        frameLayout = rootView.findViewById(R.id.fl_media_container);
         linearLayout = rootView.findViewById(R.id.ll_buttons);
 
         setOrientationParameters();
 
         Timber.d("HANDLE PLAYER");
+
+
         if (!videoUrl.isEmpty()) {
             Timber.d("video url Not empty");
 
@@ -111,7 +135,7 @@ public class Fragment_View_Step extends Fragment {
             descr = rootView.findViewById(R.id.tv_step_long_description);
             descr.setText(description);
 
-        }else{   //video is empty
+        } else {   //video is empty
             mPlayerView = rootView.findViewById(R.id.player_view);
             mPlayerView.setVisibility(View.GONE);
 
@@ -119,12 +143,14 @@ public class Fragment_View_Step extends Fragment {
 
             descr.setText(description);
         }
+
         Timber.d("RETURN");
         return rootView;
     }
-    private void initExpoPlayer(){
+
+    private void initExpoPlayer() {
         Timber.d("initExpoPlayer");
-        Beep b = new Beep();
+//        Beep b = new Beep();
         // Checking whether SimpleExoPlayer is null
         if (mSimpleExoPlayer == null) {
 
@@ -137,8 +163,7 @@ public class Fragment_View_Step extends Fragment {
                 mSimpleExoPlayer = ExoplayerUtils.initPlayer(videoUrl, getActivity(), mSimpleExoPlayer);
 
             } else {
-                mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                        (getResources(), R.drawable.novideoavailable));
+                mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.novideoavailable));
             }
         }
         // Setting SimpleExoPlayer to simpleExoPlayerView
@@ -156,19 +181,95 @@ public class Fragment_View_Step extends Fragment {
 
     }
 
-    void setOrientationParameters(){
+    private void initializePlayer() {
+        mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), new DefaultTrackSelector(), new DefaultLoadControl());
+
+        mPlayerView.setPlayer(mSimpleExoPlayer);
+
+        mSimpleExoPlayer.setPlayWhenReady(exoPlayerPlayWhenReady);
+        mSimpleExoPlayer.seekTo(currentWindow, videoPlayerCurrentPosition);
+        MediaSource mediaSource = buildMediaSource(Uri.parse(videoUrl));
+        mSimpleExoPlayer.prepare(mediaSource, true, false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+//            initializePlayer();
+            initExpoPlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        exoPlayerPlayWhenReady = SelectAStepActivity.savedPlayerWhenReady;
+        videoPlayerCurrentPosition = SelectAStepActivity.savedPlayerPosition;
+        hideSystemUi();
+        if ((Util.SDK_INT <= 23 || mSimpleExoPlayer == null)) {
+//            initializePlayer();
+            initExpoPlayer();
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private void hideSystemUi() {
+        mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory("exoplayer-codelab")).
+                createMediaSource(uri);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if ((mSimpleExoPlayer != null)) {
+            SelectAStepActivity.savedPlayerWhenReady = mSimpleExoPlayer.getPlayWhenReady();
+            SelectAStepActivity.savedPlayerPosition = mSimpleExoPlayer.getCurrentPosition();
+
+//            exoPlayerPlayWhenReady=mSimpleExoPlayer.getPlayWhenReady();
+//            videoPlayerCurrentPosition=mSimpleExoPlayer.getCurrentPosition();
+        }
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+//        onDetach();
+    }
+
+    private void releasePlayer() {
+        if (mSimpleExoPlayer != null) {
+            videoPlayerCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
+            currentWindow = mSimpleExoPlayer.getCurrentWindowIndex();
+            exoPlayerPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
+            mSimpleExoPlayer.release();
+            mSimpleExoPlayer = null;
+        }
+    }
+
+    void setOrientationParameters() {
 
         Timber.d("setOrientationParameters");
-        ScreenInfo device=new ScreenInfo(getContext());
+        ScreenInfo device = new ScreenInfo(getContext());
         int statusBarHeight = SelectAStepActivity.statusBarHeight;
-        float toolbarHeight=getResources().getDimension(R.dimen.app_bar_height);
-        if (device.inLandscapeMode() && !device.isTablet()){
-            int height=device.getHeight()-(int)toolbarHeight -statusBarHeight;
-            int width=device.getWidth();
-            frameLayout.setLayoutParams(new LinearLayout.LayoutParams(width,height));
+        float toolbarHeight = getResources().getDimension(R.dimen.app_bar_height);
+        if (device.inLandscapeMode() && !device.isTablet()) {
+            int height = device.getHeight() - (int) toolbarHeight - statusBarHeight;
+            int width = device.getWidth();
+            frameLayout.setLayoutParams(new LinearLayout.LayoutParams(width, height));
 
             Timber.d("frameLayout.setLayoutParams");
-        }else {
+        } else {
             if (device.isTablet() && device.inLandscapeMode()) {
                 linearLayout.setVisibility(View.GONE);
             }
@@ -193,27 +294,35 @@ public class Fragment_View_Step extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mSimpleExoPlayer != null) {
-            videoPlayerCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
-            exoPlayerPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
-            mSimpleExoPlayer.stop();
-            mSimpleExoPlayer.release();
-            mSimpleExoPlayer = null;
-            mListener = null;
-        }
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if (Util.SDK_INT <= 23) {
+//            if (mSimpleExoPlayer != null) {
+//                SelectAStepActivity.playerPosition=videoPlayerCurrentPosition;
+//                SelectAStepActivity.playerPlayWhenReady=exoPlayerPlayWhenReady;
+//                videoPlayerCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
+//                exoPlayerPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
+//                mSimpleExoPlayer.stop();
+//                mSimpleExoPlayer.release();
+//                mSimpleExoPlayer = null;
+//                mListener = null;
+//            }
+//        }
+//    }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if ((Util.SDK_INT <= 23 || mSimpleExoPlayer == null)) {
-            initExpoPlayer();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if ((Util.SDK_INT <= 23 || mSimpleExoPlayer == null)) {
+//            initExpoPlayer();
+//        }else {
+//            mSimpleExoPlayer.seekTo(videoPlayerCurrentPosition);
+//
+//            mSimpleExoPlayer.setPlayWhenReady(exoPlayerPlayWhenReady);
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -221,20 +330,22 @@ public class Fragment_View_Step extends Fragment {
         if (videoPlayerCurrentPosition != null) {
             savedInstanceState.putLong(KEY_CURRENT_POSITION, videoPlayerCurrentPosition);
             savedInstanceState.putBoolean(KEY_WHEN_READY, exoPlayerPlayWhenReady);
+            savedInstanceState.putInt(KEY_WINDOW, currentWindow);
         }
         super.onSaveInstanceState(savedInstanceState);
     }
+
     @Override
     public void onDetach() {
         Timber.d("onDetach");
 
-        if (mSimpleExoPlayer != null) {
-            mSimpleExoPlayer.stop();
-            mSimpleExoPlayer.release();
-            mSimpleExoPlayer = null;
-            mPlayerView = null;
-            mListener = null;
-        }
+//        if (mSimpleExoPlayer != null) {
+//            mSimpleExoPlayer.stop();
+//            mSimpleExoPlayer.release();
+//            mSimpleExoPlayer = null;
+//            mPlayerView = null;
+//            mListener = null;
+//        }
         super.onDetach();
     }
 
@@ -257,4 +368,19 @@ public class Fragment_View_Step extends Fragment {
         sStep = step;
     }
 
+    public Long getVideoPlayerCurrentPosition() {
+        return videoPlayerCurrentPosition;
+    }
+
+    public void setVideoPlayerCurrentPosition(Long videoPlayerCurrentPosition) {
+        this.videoPlayerCurrentPosition = videoPlayerCurrentPosition;
+    }
+
+    public boolean isExoPlayerPlayWhenReady() {
+        return exoPlayerPlayWhenReady;
+    }
+
+    public void setExoPlayerPlayWhenReady(boolean exoPlayerPlayWhenReady) {
+        this.exoPlayerPlayWhenReady = exoPlayerPlayWhenReady;
+    }
 }
